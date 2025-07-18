@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import Dashboard from './Dashboard';
-import Sidebar from './Sidebar';
+import Dashboard from './Components/Dashboard';
+import Sidebar from './Components/Sidebar';
 
 const App = () => {
   const STAGES = ['created', 'ongoing', 'completed', 'review', 'done'];
