@@ -1,4 +1,3 @@
-
 import { Plus } from 'lucide-react';
 import TaskCard from './TaskCard';
 
@@ -25,7 +24,7 @@ const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages, onDeleteTa
   };
 
   return (
-    <div className="flex-1 flex h-full  flex-col ">
+    <div className="flex-1 flex h-full flex-col">
       <header className="bg-white shadow-sm border-b px-2 py-2">
         <div className="flex items-center justify-between">
           <h1 className="text-xl md:text-2xl font-bold text-gray-800">
@@ -48,7 +47,7 @@ const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages, onDeleteTa
             return (
               <div
                 key={stage}
-                className=" bg-gray-100 rounded-lg p-3 shadow-sm"
+                className="bg-gray-100 rounded-lg p-3 shadow-sm"
               >
                 <h2 className="font-semibold text-center text-gray-800 mb-3">
                   {STAGE_NAMES[stage]}
@@ -63,12 +62,12 @@ const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages, onDeleteTa
                   ) : (
                     stageTasks.map((task) => (
                       <TaskCard
-                        key={task._id}
+                        key={task.id || task._id} // Added key prop - handles both id and _id
                         task={task}
                         stageColor={STAGE_COLORS[task.stage]}
                         nextStage={getNextStage(task.stage)}
-                        onMoveForward={() => onMoveTaskForward(task._id)}
-                        onDelete={() => onDeleteTask(task._id)}
+                        onMoveForward={() => onMoveTaskForward(task.id || task._id)}
+                        onDelete={() => onDeleteTask(task.id || task._id)}
                         onEdit={() => onEditTask(task)}
                       />
                     ))

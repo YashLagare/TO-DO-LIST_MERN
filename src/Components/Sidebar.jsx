@@ -8,15 +8,15 @@ const Sidebar = ({ isOpen, onClose, onCreateTask, onUpdateTask, editingTask, onC
     endDate: ""
   });
 
-  useEffect(()=>{
-    if(editingTask){
+  useEffect(() => {
+    if (editingTask) {
       setFormData({
         title: editingTask.title || '',
         description: editingTask.description || '',
         startDate: editingTask.startDate || '',
         endDate: editingTask.endDate || ''
       });
-    }else{
+    } else {
       setFormData({
         title: "",
         description: "",
@@ -32,21 +32,28 @@ const Sidebar = ({ isOpen, onClose, onCreateTask, onUpdateTask, editingTask, onC
   };
 
   const handleSubmit = (e) => {
-  e.preventDefault();
-  if (!formData.title.trim()) return;
-  
-  const formatted = {
-    title: formData.title,
-    description: formData.description,
-    startDate: formData.startDate,
-    endDate: formData.endDate
-  }
-  if (editingTask && editingTask._id) {
-    onUpdateTask(editingTask._id, formatted);
-  } else {
-    onCreateTask(formatted); 
-  }
-};
+    e.preventDefault();
+    if (!formData.title.trim()) return;
+    
+    const formatted = {
+      title: formData.title,
+      description: formData.description,
+      startDate: formData.startDate,
+      endDate: formData.endDate
+    }
+    
+    if (editingTask) {
+      // Use the correct ID - prioritize 'id' over '_id'
+      const taskId = editingTask.id || editingTask._id;
+      if (taskId) {
+        onUpdateTask(taskId, formatted);
+      } else {
+        console.error('No valid ID found for editing task:', editingTask);
+      }
+    } else {
+      onCreateTask(formatted); 
+    }
+  };
 
   return (
     <div className={`fixed inset-0 z-40 bg-black/50 transition-opacity ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
@@ -95,7 +102,7 @@ const Sidebar = ({ isOpen, onClose, onCreateTask, onUpdateTask, editingTask, onC
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
           >
-            {editingTask ? "update Task" :  "Add Task"}
+            {editingTask ? "Update Task" : "Add Task"}
           </button>
         </form>
       </div>
