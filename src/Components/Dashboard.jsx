@@ -2,7 +2,7 @@
 import { Plus } from 'lucide-react';
 import TaskCard from './TaskCard';
 
-const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages }) => {
+const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages, onDeleteTask, onEditTask }) => {
   const STAGE_NAMES = {
     created: 'Created',
     ongoing: 'Ongoing',
@@ -40,7 +40,7 @@ const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages }) => {
         </div>
       </header>
 
-      <main className="flex-1 p-2 md:p-4"> 
+      <main className="flex-1 p-2 md:p-4">
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {stages.map((stage) => {
             const stageTasks = tasks.filter((task) => task.stage === stage);
@@ -63,11 +63,13 @@ const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages }) => {
                   ) : (
                     stageTasks.map((task) => (
                       <TaskCard
-                        key={task.id}
+                        key={task._id}
                         task={task}
                         stageColor={STAGE_COLORS[task.stage]}
                         nextStage={getNextStage(task.stage)}
-                        onMoveForward={() => onMoveTaskForward(task.id)}
+                        onMoveForward={() => onMoveTaskForward(task._id)}
+                        onDelete={() => onDeleteTask(task._id)}
+                        onEdit={() => onEditTask(task)}
                       />
                     ))
                   )}

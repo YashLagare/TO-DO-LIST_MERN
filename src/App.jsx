@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Dashboard from './Components/Dashboard';
 import Sidebar from './Components/Sidebar';
+import apiService from './services/api';
 
 const App = () => {
   const STAGES = ['created', 'ongoing', 'completed', 'review', 'done'];
@@ -8,49 +9,78 @@ const App = () => {
   const [tasks, setTasks] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  const [hasLoaded, setHasLoaded] = useState(false); 
+  const [hasLoaded, setHasLoaded] = useState(false);
 
 
   useEffect(() => {
-    const saved = localStorage.getItem('kanban-tasks');
-    if (saved) {
-      setTasks(JSON.parse(saved));
+    const fetchTasks = async () => {
+      try {
+        const data = await apiService.getTasks();
+        setTasks(data);
+        setHasLoaded(true);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
     }
-    setHasLoaded(true); 
+    fetchTasks();
   }, []);
 
-  
-  useEffect(() => {
-    if (hasLoaded) {
-      localStorage.setItem('kanban-tasks', JSON.stringify(tasks));
+
+
+  const createTask = async (taskData) => {
+    try {
+      const newTask = await apiService.createTask(taskData);
+      setTasks([...tasks, newTask]);
+      setSidebarOpen(false);
+    } catch (error) {
+      console.error('Error in createTask:', error);
     }
-  }, [tasks, hasLoaded]);
+  }
 
-  const createTask = (taskData) => {
-    const newTask = {
-      id: Date.now(),
-      ...taskData,
-      stage: 'created',
-      createdAt: new Date().toISOString()
-    };
-    setTasks(prev => [...prev, newTask]);
-    setSidebarOpen(false);
+  const moveTaskForward = async (taskId) => {
+    const task = tasks.find((t) => t._id === taskId); // Ensure using Mongo _id
+    if (!task) return;
+
+    const currentStageIndex = STAGES.indexOf(task.stage);
+    const nextStage = STAGES[currentStageIndex + 1];
+    if (!nextStage) return;
+
+    try {
+      const updated = await apiService.updateTask(taskId, { stage: nextStage });
+      setTasks(prev =>
+        prev.map(t => (t._id === updated._id ? updated : t))
+      );
+    } catch (error) {
+      console.error('Error moving task:', error);
+    }
   };
 
-  const moveTaskForward = (taskId) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId
-          ? {
-              ...task,
-              stage: STAGES[STAGES.indexOf(task.stage) + 1]
-            }
-          : task
-      )
-    );
+  const updateTask = async (taskId, updatedData) => {
+    try {
+      const updated = await apiService.updateTask(taskId, updatedData);
+      setTasks(prev =>
+        prev.map(t => (t._id === updated._id ? updated : t))
+      );
+      setSidebarOpen(false);
+      setEditingTask(null);
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   };
 
-  
+  const deleteTask = async (taskId) => {
+    try {
+      await apiService.deleteTask(taskId);
+      setTasks(prev => prev.filter(t => t._id !== taskId));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
+  const onEditTask = (task) => {
+    setEditingTask(task);
+    setSidebarOpen(true);
+  };
+
   const openSidebar = () => {
     setEditingTask(null);
     setSidebarOpen(true);
@@ -68,6 +98,7 @@ const App = () => {
         onClose={() => setSidebarOpen(false)}
         onCreateTask={createTask}
         onCancel={cancelEdit}
+        onUpdateTask={updateTask}
         editingTask={editingTask}
       />
 
@@ -80,8 +111,10 @@ const App = () => {
 
       <Dashboard
         tasks={tasks}
+        onEditTask={onEditTask}
         onOpenSidebar={openSidebar}
         onMoveTaskForward={moveTaskForward}
+        onDeleteTask={deleteTask}
         stages={STAGES}
       />
     </div>

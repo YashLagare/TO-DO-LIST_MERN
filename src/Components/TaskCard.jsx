@@ -1,5 +1,5 @@
 
-const TaskCard = ({ task, stageColor, nextStage, onMoveForward }) => {
+const TaskCard = ({ task, stageColor, nextStage, onMoveForward, onDelete, onEdit }) => {
   return (
     <div className={`border-l-4 ${stageColor} bg-gray-100 rounded-lg shadow-sm p-3`}>
       <h3 className="font-bold text-gray-800 text-sm mb-1">{task.title}</h3>
@@ -23,6 +23,8 @@ const TaskCard = ({ task, stageColor, nextStage, onMoveForward }) => {
           Move to {nextStage.charAt(0).toUpperCase() + nextStage.slice(1)}
         </button>
       )}
+      <button onClick={onEdit} className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-2 py-1  rounded">Edit</button>
+      <button onClick={onDelete} className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1  rounded">Delete</button>
     </div>
   );
 };
