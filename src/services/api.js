@@ -8,9 +8,49 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // enable cookies
 });
 
+api.interceptors.request.use(
+  (config) => {
+    //we can add additional headers if we want 
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+//add response interceptor to handel authentication error
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      // handle the case when the user is not authenticated
+      localStorage.removeItem('todoapp_user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 class ApiService {
+
+  //Authentication methods
+  async login(Credentials){
+    const response = await api.post('/auth/login', Credentials);
+    return response.data;
+  }
+  async signup(userData){
+    const response = await api.post('/auth/signup', userData);
+    return response.data;
+  }
+  async logout(){
+    const response = await api.post('/auth/logout');
+    return response.data;
+  }
     //get all tasks
   async getTasks() {
     const response = await api.get("/tasks");
@@ -40,13 +80,6 @@ class ApiService {
     const response = await api.delete(`/tasks/delete/${id}`);
     return response.data.data;
   }
-
-
-
-
-
-
-
 }
 const apiService = new ApiService();
 export default apiService;
