@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import Navbar from '../Components/Navbar';
 import TaskCard from './TaskCard';
 
 const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages, onDeleteTask, onEditTask }) => {
@@ -25,20 +25,8 @@ const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages, onDeleteTa
 
   return (
     <div className="flex-1 flex h-full flex-col">
-      <header className="bg-white shadow-sm border-b px-2 py-2">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-800">
-            Todo Board
-          </h1>
-          <button
-            onClick={onOpenSidebar}
-            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors shadow-lg"
-          >
-            <Plus size={20} />
-          </button>
-        </div>
-      </header>
-
+     
+     <Navbar onOpenSidebar={onOpenSidebar} />
       <main className="flex-1 p-2 md:p-4">
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {stages.map((stage) => {
@@ -62,7 +50,7 @@ const Dashboard = ({ tasks, onOpenSidebar, onMoveTaskForward, stages, onDeleteTa
                   ) : (
                     stageTasks.map((task) => (
                       <TaskCard
-                        key={task.id || task._id} // Added key prop - handles both id and _id
+                        key={task.id || task._id}
                         task={task}
                         stageColor={STAGE_COLORS[task.stage]}
                         nextStage={getNextStage(task.stage)}

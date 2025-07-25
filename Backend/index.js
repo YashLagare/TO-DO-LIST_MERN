@@ -5,6 +5,7 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import connectDB from './db/connectDB.js';
 import errorHandler from './middleware/errorHandler.js';
+import authRoutes from './routes/authRoute.js';
 import taskRoutes from './routes/taskRoutes.js';
 // Load env vars
 dotenv.config();
@@ -24,7 +25,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
+
 
 const frontendPath = path.join(__dirname, "../dist");
 app.use(express.static(frontendPath));
