@@ -35,6 +35,8 @@ const LoginPage = () => {
     const result = await login(formData);
     if (result) {
       navigate("/");
+    }else if(error){
+      alert("Password or Email is incorrect");
     }
   };
 
