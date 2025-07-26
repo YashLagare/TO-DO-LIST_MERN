@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
-import Dashboard from '../components/Dashboard';
-import Sidebar from '../components/Sidebar';
+import Dashboard from '../Components/Dashboard';
+import Sidebar from '../Components/Sidebar';
 import apiService from '../services/api';
 
 const STAGES = ['created', 'ongoing', 'completed', 'review', 'done'];
