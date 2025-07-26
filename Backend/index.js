@@ -1,18 +1,17 @@
-import cors from 'cors';
-import dotenv from 'dotenv';
-import express from 'express';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import connectDB from './db/connectDB.js';
-import errorHandler from './middleware/errorHandler.js';
-import authRoutes from './routes/authRoute.js';
-import taskRoutes from './routes/taskRoutes.js';
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import connectDB from "./db/connectDB.js";
+import errorHandler from "./middleware/errorHandler.js";
+import authRoutes from "./routes/authRoute.js";
+import taskRoutes from "./routes/taskRoutes.js";
 // Load env vars
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 
 // Connect to database
 connectDB();
@@ -20,24 +19,27 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: 'http://localhost:5173',  // your frontend
-  credentials: true                // allow cookies to be sent
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173", // your frontend
+    credentials: true, // allow cookies to be sent
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/tasks', taskRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/tasks", taskRoutes);
 
+if (process.env.NODE_ENV === "production") {
+  const frontendPath = path.join(__dirname, "../dist");
+  app.use(express.static(frontendPath));
 
-const frontendPath = path.join(__dirname, "../dist");
-app.use(express.static(frontendPath));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
-});
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, dist, "index.html"));
+  });
+}
 
 // Health check route
 // app.get('/', (req, res) => {

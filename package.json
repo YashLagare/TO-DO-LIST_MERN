@@ -4,12 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:backend": "npm run dev --prefix Backend",
-    "dev:both": "concurrently \"npm run dev\" \"npm run dev:backend\"",
-    "build": "vite build",
-    "preview": "vite preview",
-    "start:backend": "npm run start --prefix Backend"
+    "build": "npm install --prefix Backend && npm install && vite build",
+    "start": "npm run start --prefix Backend"
   },
   "dependencies": {
     "axios": "^1.10.0",

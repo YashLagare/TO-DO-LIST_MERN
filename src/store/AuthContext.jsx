@@ -8,7 +8,10 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+  // Fixed: Match the same pattern as your api.js file
+  const API_BASE_URL = import.meta.env.MODE === "development" 
+    ? "http://localhost:5000/api" 
+    : "/api";
 
   // Check if user is logged in on app start
   useEffect(() => {
