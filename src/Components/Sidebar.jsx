@@ -51,7 +51,7 @@ const Sidebar = ({ isOpen, onClose, onCreateTask, onUpdateTask, editingTask, onC
       const taskId = editingTask.id || editingTask._id;
       if (taskId) {
         onUpdateTask(taskId, formatted);
-        toast.success("Task updated successfully ✅");
+        // toast.success("Task updated successfully ✅");
       } else {
         console.error('No valid ID found for editing task:', editingTask);
         toast.error("Unable to update task. Please try again.❌");
