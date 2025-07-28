@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
 const Sidebar = ({ isOpen, onClose, onCreateTask, onUpdateTask, editingTask, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -33,25 +34,31 @@ const Sidebar = ({ isOpen, onClose, onCreateTask, onUpdateTask, editingTask, onC
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.title.trim()) return;
-    
+    if (!formData.title.trim()) {
+      toast.error('Task title is required ❌');
+      return;
+    }
+
     const formatted = {
       title: formData.title,
       description: formData.description,
       startDate: formData.startDate,
       endDate: formData.endDate
     }
-    
+
     if (editingTask) {
       // Use the correct ID - prioritize 'id' over '_id'
       const taskId = editingTask.id || editingTask._id;
       if (taskId) {
         onUpdateTask(taskId, formatted);
+        toast.success("Task updated successfully ✅");
       } else {
         console.error('No valid ID found for editing task:', editingTask);
+        toast.error("Unable to update task. Please try again.❌");
       }
     } else {
-      onCreateTask(formatted); 
+      onCreateTask(formatted);
+      toast.success("Task created successfully 🎉");
     }
   };
 

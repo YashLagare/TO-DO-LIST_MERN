@@ -1,4 +1,4 @@
-
+import { toast } from "react-hot-toast";
 const TaskCard = ({ task, stageColor, nextStage, onMoveForward, onDelete, onEdit }) => {
   return (
     <div className={`border-l-4 ${stageColor} bg-gray-100 rounded-lg shadow-sm p-3`}>
@@ -17,14 +17,23 @@ const TaskCard = ({ task, stageColor, nextStage, onMoveForward, onDelete, onEdit
 
       {nextStage && (
         <button
-          onClick={onMoveForward}
+          onClick={() => {
+            onMoveForward();
+            toast.success(`Moved to ${nextStage} ✅`);
+          }}
           className="mt-2 bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded transition"
         >
           Move to {nextStage.charAt(0).toUpperCase() + nextStage.slice(1)}
         </button>
       )}
-      <button onClick={onEdit} className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-2 py-1  rounded">Edit</button>
-      <button onClick={onDelete} className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1  rounded">Delete</button>
+      <button onClick={() => {
+        onEdit();
+        toast.success(`Task edited successfully ✏️`);
+      }} className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-2 py-1  rounded">Edit</button>
+      <button onClick={() => {
+        onDelete();
+        toast.success(`Task deleted successfully 🚮`);
+      }} className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1  rounded">Delete</button>
     </div>
   );
 };

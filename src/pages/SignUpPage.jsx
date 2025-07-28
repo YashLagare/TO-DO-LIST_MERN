@@ -1,5 +1,6 @@
 import { CheckCircle, Eye, EyeOff, Lock, Mail, User, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/AuthContext";
 
@@ -12,7 +13,7 @@ const SignUpPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   const { signup, loading, error, clearError, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -39,13 +40,21 @@ const SignUpPage = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match ❌");
       return; // Don't submit if passwords don't match
+    }
+    if (!isPasswordValid) {
+      toast.error("Password must be at least 6 characters");
+      return;
     }
 
     const { confirmPassword, ...signupdata } = formData;
     const result = await signup(signupdata);
     if (result) {
+      toast.success("Account created successfully 🎉");
       navigate("/");
+    } else {
+      toast.error("Signup failed 😞");
     }
   };
 
@@ -192,9 +201,8 @@ const SignUpPage = () => {
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/70 ${
-                    showPasswordError ? 'border-red-300 ring-1 ring-red-300' : 'border-gray-200'
-                  }`}
+                  className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/70 ${showPasswordError ? 'border-red-300 ring-1 ring-red-300' : 'border-gray-200'
+                    }`}
                   placeholder="Confirm your password"
                 />
                 <button

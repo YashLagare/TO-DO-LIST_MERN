@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/AuthContext";
 
@@ -31,22 +32,24 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const result = await login(formData);
     if (result) {
+      toast.success("Logged in successfully 🎉")
       navigate("/");
-    }else if(error){
-      alert("Password or Email is incorrect");
+    } else if (error) {
+      toast.error("Password or Email is incorrect ❌");
+      // alert("Password or Email is incorrect");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 via-purple-400/10 to-pink-400/10"></div>
-      
+
       <div className="relative max-w-md w-full">
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 space-y-8 transform transition-all duration-300 hover:shadow-3xl">
-          
+
           {/* Header */}
           <div className="text-center">
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
@@ -54,11 +57,11 @@ const LoginPage = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            
+
             <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               Sign in to your existing account🫂
             </h2>
-            
+
             <p className="mt-3 text-gray-600">
               Or{' '}
               <Link
@@ -77,7 +80,7 @@ const LoginPage = () => {
                 {error}
               </div>
             )}
-            
+
             <div className="space-y-5">
               {/* Email Field */}
               <div className="group">
