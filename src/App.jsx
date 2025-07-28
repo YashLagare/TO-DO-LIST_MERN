@@ -1,4 +1,5 @@
 
+import { Toaster } from 'react-hot-toast';
 import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './Components/ProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
