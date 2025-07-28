@@ -1,4 +1,5 @@
 import { LucideLogOut, Plus } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import { useAuth } from '../store/AuthContext';
 
 const Navbar = ({ onOpenSidebar }) => {
@@ -6,6 +7,7 @@ const Navbar = ({ onOpenSidebar }) => {
 
     const handleLogout = async () => {
         await logout();
+        toast.success("👋 Logged out successfully");
     };
 
     return (
