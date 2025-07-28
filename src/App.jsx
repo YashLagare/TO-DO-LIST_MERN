@@ -10,7 +10,7 @@ import { AuthProvider } from './store/AuthContext';
 const App = () => {
   return (
     <AuthProvider>
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/signup" element={<SignUpPage />} />
