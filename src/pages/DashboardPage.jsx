@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { toast } from "react-hot-toast";
 import Dashboard from '../Components/Dashboard';
 import Sidebar from '../Components/Sidebar';
 import apiService from '../services/api';
@@ -73,6 +74,7 @@ const DashboardPage = () => {
       setSidebarOpen(false);
       setEditingTask(null);
       setError(null);
+      toast.success("Task updated successfully ✨");
     } catch (error) {
       console.error('Error updating task:', error);
       setError('Failed to update task');

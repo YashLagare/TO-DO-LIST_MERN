@@ -26,10 +26,7 @@ const TaskCard = ({ task, stageColor, nextStage, onMoveForward, onDelete, onEdit
           Move to {nextStage.charAt(0).toUpperCase() + nextStage.slice(1)}
         </button>
       )}
-      <button onClick={() => {
-        onEdit();
-        toast.success(`Task edited successfully ✏️`);
-      }} className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-2 py-1  rounded">Edit</button>
+      <button onClick={ onEdit} className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-2 py-1  rounded">Edit</button>
       <button onClick={() => {
         onDelete();
         toast.success(`Task deleted successfully 🚮`);
