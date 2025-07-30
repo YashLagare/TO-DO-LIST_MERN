@@ -25,6 +25,16 @@ app.use(
     credentials: true, // allow cookies to be sent
   })
 );
+app.use((req, res, next) => {
+  console.log(`\n🌐 ===== INCOMING REQUEST =====`);
+  console.log(`📡 ${req.method} ${req.url}`);
+  console.log(`📡 Origin: ${req.get('Origin')}`);
+  console.log(`📡 Content-Type: ${req.get('Content-Type')}`);
+  console.log(`==============================\n`);
+  next();
+});
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

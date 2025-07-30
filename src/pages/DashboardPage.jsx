@@ -1,94 +1,82 @@
-
 import { useEffect, useState } from 'react';
 import { toast } from "react-hot-toast";
+import { useDispatch, useSelector } from 'react-redux';
 import Dashboard from '../Components/Dashboard';
 import Sidebar from '../Components/Sidebar';
-import apiService from '../services/api';
+import {
+  clearError,
+  createTask,
+  deleteTask,
+  fetchTasks,
+  moveTask,
+  updateTask
+} from '../store/taskSlice';
 
 const STAGES = ['created', 'ongoing', 'completed', 'review', 'done'];
 
 const DashboardPage = () => {
-  const [tasks, setTasks] = useState([]);
+  const dispatch = useDispatch();
+  const { tasks, loading, error, hasLoaded } = useSelector((state) => state.tasks);
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  const [hasLoaded, setHasLoaded] = useState(false);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const data = await apiService.getTasks();
-        setTasks(data);
-        setHasLoaded(true);
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-        setError('Failed to load tasks. Please check if the server is running.');
-        setHasLoaded(true);
-      }
-    };
-    fetchTasks();
-  }, []);
+    if (!hasLoaded) {
+      dispatch(fetchTasks());
+    }
+  }, [dispatch, hasLoaded]);
 
-  const createTask = async (taskData) => {
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
+  const handleCreateTask = async (taskData) => {
     try {
-      const newTask = await apiService.createTask(taskData);
-      setTasks([...tasks, newTask]);
+      await dispatch(createTask(taskData)).unwrap();
       setSidebarOpen(false);
-      setError(null);
+      toast.success("Task created successfully 🎉");
     } catch (error) {
-      console.error('Error in createTask:', error);
-      setError('Failed to create task');
+      toast.error("Failed to create task ❌");
     }
   };
 
-  const moveTaskForward = async (taskId) => {
+  const handleMoveTaskForward = async (taskId) => {
     const task = tasks.find((t) => (t.id || t._id) === taskId);
-    if (!task) {
-      setError('Task not found');
-      return;
-    }
+    if (!task) return;
 
     const currentStageIndex = STAGES.indexOf(task.stage);
     const nextStage = STAGES[currentStageIndex + 1];
     if (!nextStage) return;
 
     try {
-      const updated = await apiService.updateTask(taskId, { stage: nextStage });
-      setTasks((prev) =>
-        prev.map((t) => ((t.id || t._id) === (updated.id || updated._id) ? updated : t))
-      );
-      setError(null);
+      await dispatch(moveTask({ taskId, stage: nextStage })).unwrap();
+      toast.success(`Moved to ${nextStage} ✅`);
     } catch (error) {
-      console.error('Error moving task:', error);
-      setError('Failed to move task');
+      toast.error("Failed to move task ❌");
     }
   };
 
-  const updateTask = async (taskId, updatedData) => {
+  const handleUpdateTask = async (taskId, updatedData) => {
     try {
-      const updated = await apiService.updateTask(taskId, updatedData);
-      setTasks((prev) =>
-        prev.map((t) => ((t.id || t._id) === (updated.id || updated._id) ? updated : t))
-      );
+      await dispatch(updateTask({ taskId, taskData: updatedData })).unwrap();
       setSidebarOpen(false);
       setEditingTask(null);
-      setError(null);
       toast.success("Task updated successfully ✨");
     } catch (error) {
-      console.error('Error updating task:', error);
-      setError('Failed to update task');
+      toast.error("Failed to update task ❌");
     }
   };
 
-  const deleteTask = async (taskId) => {
+  const handleDeleteTask = async (taskId) => {
     try {
-      await apiService.deleteTask(taskId);
-      setTasks((prev) => prev.filter((t) => (t.id || t._id) !== taskId));
-      setError(null);
+      await dispatch(deleteTask(taskId)).unwrap();
+      toast.success("Task deleted successfully 🚮");
     } catch (error) {
-      console.error('Error deleting task:', error);
-      setError('Failed to delete task');
+      toast.error("Failed to delete task ❌");
     }
   };
 
@@ -120,26 +108,12 @@ const DashboardPage = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {error && (
-        <div className="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50">
-          <div className="flex items-center justify-between">
-            <span>{error}</span>
-            <button
-              onClick={() => setError(null)}
-              className="ml-4 text-red-500 hover:text-red-700"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
-
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        onCreateTask={createTask}
+        onCreateTask={handleCreateTask}
         onCancel={cancelEdit}
-        onUpdateTask={updateTask}
+        onUpdateTask={handleUpdateTask}
         editingTask={editingTask}
       />
 
@@ -154,8 +128,8 @@ const DashboardPage = () => {
         tasks={tasks}
         onEditTask={onEditTask}
         onOpenSidebar={openSidebar}
-        onMoveTaskForward={moveTaskForward}
-        onDeleteTask={deleteTask}
+        onMoveTaskForward={handleMoveTaskForward}
+        onDeleteTask={handleDeleteTask}
         stages={STAGES}
       />
     </div>

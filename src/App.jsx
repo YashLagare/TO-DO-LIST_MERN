@@ -1,23 +1,53 @@
-
+// src/App.jsx
+import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { Provider, useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
+import { store } from './store';
+import { AuthProvider } from './store/AuthContext';
+import { checkAuth } from './store/authSlice';
+
+// Components
 import ProtectedRoute from './Components/ProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
-import { AuthProvider } from './store/AuthContext';
 
-const App = () => {
+// App Content Component (to use hooks inside Provider)
+const AppContent = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+
   return (
-    <AuthProvider>
-      <Toaster position="top-center" reverseOrder={false} />
+    <>
       <Routes>
-        <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-        <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
-    </AuthProvider>
+      <Toaster position="bottom-center" />
+    </>
   );
 };
+
+function App() {
+  return (
+    <Provider store={store}>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Provider>
+  );
+}
 
 export default App;

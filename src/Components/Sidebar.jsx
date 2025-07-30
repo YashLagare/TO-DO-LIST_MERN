@@ -58,7 +58,8 @@ const Sidebar = ({ isOpen, onClose, onCreateTask, onUpdateTask, editingTask, onC
       }
     } else {
       onCreateTask(formatted);
-      toast.success("Task created successfully 🎉");
+      // toast.success("Task created successfully 🎉"); // Remove this line to prevent double toast
+      setFormData({ title: '', description: '', startDate: '', endDate: '' }); // Reset form after creation
     }
   };
 
